@@ -8,7 +8,7 @@
              (gnu packages boost)
              (gnu packages cmake)
              (gnu packages gcc)
-             (gnu packages opencog))
+             (agent-zero packages cognitive))
 
 (packages->manifest
   (list
@@ -21,10 +21,14 @@
     gcc-toolchain
     pkg-config
     
-    ;; OpenCog packages
-    cogutil
-    atomspace
+    ;; Cognitive packages
     opencog
+    ggml
+    guile-pln
+    guile-ecan
+    guile-moses
+    guile-pattern-matcher
+    guile-relex
     
     ;; Math and scientific computing
     boost))

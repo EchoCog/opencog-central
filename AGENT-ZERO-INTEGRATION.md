@@ -41,6 +41,7 @@ Agent-Zero Genesis provides:
 - **Task**: Scheduler, MOSES optimizer, agent orchestration  
 - **AI**: PLN reasoning, ECAN attention, pattern matching
 - **Autonomy**: Self-modifying kernels, adaptive package selection
+- **Persistence**: Hypergraph state save/restore for cognitive continuity
 
 ### Build Flow
 
@@ -209,6 +210,27 @@ Full integration test pipeline:
 
 (display "Hypergraph state: ") (display hg-state) (newline)
 (display "Prime encoding: ") (display encoding) (newline)
+```
+
+### Hypergraph Persistence
+
+```scheme
+;; Setup cognitive kernel with persistence
+(use-modules (agent-zero kernel)
+             (agent-zero persistence))
+
+(define kernel (spawn-cognitive-kernel '(64 32) 0.8))
+
+;; Save hypergraph state
+(save-hypergraph-state kernel "experiment-session-1")
+
+;; Later: restore hypergraph state
+(define loaded (load-hypergraph-state "experiment-session-1"))
+(define restored-kernel (persistent-kernel-kernel loaded))
+
+;; Verify state preservation
+(display "Original shape: ") (display (kernel-tensor-shape kernel)) (newline)
+(display "Restored shape: ") (display (kernel-tensor-shape restored-kernel)) (newline)
 ```
 
 ### C Library Integration

@@ -22,7 +22,10 @@
             generate-fibonacci
             generate-harmonics
             generate-factorials
-            generate-powers-of-two))
+            generate-powers-of-two
+            ;; Persistence integration
+            save-kernel-to-state
+            load-kernel-from-state))
 
 ;; Define cognitive kernel record type
 (define-record-type <cognitive-kernel>
@@ -251,3 +254,14 @@
     (tensor-shape . ,(kernel-tensor-shape kernel))
     (attention . ,(kernel-attention kernel))
     (meta-level . ,(recursive-depth kernel))))
+
+;; Persistence integration functions (forward declarations)
+;; These will be implemented by the persistence module
+(define save-kernel-to-state #f)
+(define load-kernel-from-state #f)
+
+;; Set persistence functions when persistence module is loaded
+(define (set-persistence-functions! save-func load-func)
+  "Set persistence functions for kernel module."
+  (set! save-kernel-to-state save-func)
+  (set! load-kernel-from-state load-func))

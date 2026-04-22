@@ -58,10 +58,10 @@ endif()
 # Optional native CPU tuning for local developer builds
 if(ENABLE_NATIVE_OPTIMIZATIONS AND NOT CMAKE_CROSSCOMPILING)
     if(CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
-        add_compile_options($<$<COMPILE_LANGUAGE:C>:-march=native -mtune=native>)
+        add_compile_options($<$<COMPILE_LANGUAGE:C>:-march=native> $<$<COMPILE_LANGUAGE:C>:-mtune=native>)
     endif()
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-march=native -mtune=native>)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-march=native> $<$<COMPILE_LANGUAGE:CXX>:-mtune=native>)
     endif()
 endif()
 

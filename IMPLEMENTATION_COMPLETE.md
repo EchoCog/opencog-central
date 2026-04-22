@@ -26,7 +26,7 @@ into the CoGnuCash Unified Cognitive Branch (EchoCog/opencog-central).
 | `test/gtest-qof-multi-entity.cpp` | 38 | ~550 | Multi-entity aggregation, Owner integration |
 | `test/gtest-multi-entity-edge-cases.cpp` | 32 | ~470 | Edge cases, null safety, stress tests |
 
-### 2. Build System Updated
+### 2. Build Configuration Updated
 
 - `libgnucash/engine/CMakeLists.txt` updated with 3 new test targets:
   - `test-organization` (OrganizationTests)
@@ -41,15 +41,15 @@ into the CoGnuCash Unified Cognitive Branch (EchoCog/opencog-central).
 
 ### 4. Adaptation for Unified Branch
 
-The original gnucashmulti tests use the full GnuCash build system
+The original gnucashmulti tests use the full GnuCash build toolchain
 (`config.h`, `qof.h`, `qofbook.h`, separate `gncOrganization.h`). The
 unified branch consolidates everything into `gncOwner.h`. All tests were
 adapted to work with this self-contained API while preserving the same
 test coverage and intent.
 
-### 5. Bug Fix Note
+### 5. Bugfix Note
 
-The null pointer bug fix from commit `9d9e71b023` (`gncOrganizationOnDone`
+The null pointer bugfix from commit `9d9e71b023` (`gncOrganizationOnDone`
 calling `gncAddressClearDirty` on a potentially NULL `addr`) does not apply
 to the unified branch, which uses string-based address fields (`addr1`–`addr4`)
 instead of a `GncAddress*` object. The equivalent null safety is inherently

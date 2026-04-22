@@ -42,9 +42,10 @@
  */
 
 #include <glib.h>
-#include <vector>
+
 #include <algorithm>
 #include <string>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -56,7 +57,7 @@
 
 class MultiEntityEdgeCaseTest : public ::testing::Test
 {
-protected:
+  protected:
     void SetUp() override
     {
         org = gncOrganizationCreate(nullptr);
@@ -65,26 +66,23 @@ protected:
 
     void TearDown() override
     {
-        if (org)
-        {
+        if (org) {
             gncOrganizationDestroy(org);
             org = nullptr;
         }
     }
 
-    GncOrganization* org = nullptr;
+    GncOrganization *org = nullptr;
 };
 
 TEST_F(MultiEntityEdgeCaseTest, GUIDIsNonZeroAfterCreate)
 {
-    const GncGUID* guid = gncOrganizationGetGUID(org);
+    const GncGUID *guid = gncOrganizationGetGUID(org);
     ASSERT_NE(nullptr, guid);
 
     gboolean all_zero = TRUE;
-    for (int i = 0; i < 16; i++)
-    {
-        if (guid->data[i] != 0)
-        {
+    for (int i = 0; i < 16; i++) {
+        if (guid->data[i] != 0) {
             all_zero = FALSE;
             break;
         }
@@ -99,15 +97,13 @@ TEST_F(MultiEntityEdgeCaseTest, GUIDNullForNullOrg)
 
 TEST_F(MultiEntityEdgeCaseTest, DestroyedOrgGUIDNotReused)
 {
-    GncOrganization* o2 = gncOrganizationCreate(nullptr);
-    const GncGUID* guid1 = gncOrganizationGetGUID(org);
-    const GncGUID* guid2 = gncOrganizationGetGUID(o2);
+    GncOrganization *o2 = gncOrganizationCreate(nullptr);
+    const GncGUID *guid1 = gncOrganizationGetGUID(org);
+    const GncGUID *guid2 = gncOrganizationGetGUID(o2);
 
     gboolean same = TRUE;
-    for (int i = 0; i < 16; i++)
-    {
-        if (guid1->data[i] != guid2->data[i])
-        {
+    for (int i = 0; i < 16; i++) {
+        if (guid1->data[i] != guid2->data[i]) {
             same = FALSE;
             break;
         }
@@ -128,7 +124,7 @@ TEST_F(MultiEntityEdgeCaseTest, EmptyEntityList)
 
 TEST_F(MultiEntityEdgeCaseTest, RemoveFromEmptyEntityList)
 {
-    gchar* entity = g_strdup("nonexistent");
+    gchar *entity = g_strdup("nonexistent");
     gncOrganizationRemoveEntity(org, entity);
     EXPECT_EQ(nullptr, gncOrganizationGetEntities(org));
     g_free(entity);
@@ -141,7 +137,7 @@ TEST_F(MultiEntityEdgeCaseTest, EmptyChildrenList)
 
 TEST_F(MultiEntityEdgeCaseTest, RemoveNonexistentChild)
 {
-    GncOrganization* child = gncOrganizationCreate(nullptr);
+    GncOrganization *child = gncOrganizationCreate(nullptr);
     gncOrganizationRemoveChild(org, child);
     EXPECT_EQ(nullptr, gncOrganizationGetChildren(org));
     gncOrganizationDestroy(child);
@@ -154,35 +150,33 @@ TEST_F(MultiEntityEdgeCaseTest, RemoveNonexistentChild)
 TEST_F(MultiEntityEdgeCaseTest, DeepHierarchy)
 {
     // Create a chain of 10 parent-child relationships
-    std::vector<GncOrganization*> chain;
+    std::vector<GncOrganization *> chain;
     chain.push_back(org);
 
-    for (int i = 0; i < 10; i++)
-    {
-        GncOrganization* child = gncOrganizationCreate(nullptr);
-        gncOrganizationSetName(child,
-            g_strdup_printf("Level %d", i + 1));
+    for (int i = 0; i < 10; i++) {
+        GncOrganization *child = gncOrganizationCreate(nullptr);
+        gchar *tmp_name = g_strdup_printf("Level %d", i + 1);
+        gncOrganizationSetName(child, tmp_name);
+        g_free(tmp_name);
         gncOrganizationAddChild(chain.back(), child);
         gncOrganizationSetParent(child, chain.back());
         chain.push_back(child);
     }
 
     // Verify the chain
-    for (size_t i = 1; i < chain.size(); i++)
-    {
+    for (size_t i = 1; i < chain.size(); i++) {
         EXPECT_EQ(chain[i - 1], gncOrganizationGetParent(chain[i]));
     }
 
     // Clean up (skip org at index 0 — cleaned by fixture)
-    for (size_t i = 1; i < chain.size(); i++)
-    {
+    for (size_t i = 1; i < chain.size(); i++) {
         gncOrganizationDestroy(chain[i]);
     }
 }
 
 TEST_F(MultiEntityEdgeCaseTest, CircularParentRejected)
 {
-    GncOrganization* child = gncOrganizationCreate(nullptr);
+    GncOrganization *child = gncOrganizationCreate(nullptr);
     gncOrganizationSetParent(child, org);
 
     // Trying to set org's parent to child would create a cycle
@@ -201,7 +195,7 @@ TEST_F(MultiEntityEdgeCaseTest, AddNullChild)
 
 TEST_F(MultiEntityEdgeCaseTest, SetNullParent)
 {
-    GncOrganization* parent = gncOrganizationCreate(nullptr);
+    GncOrganization *parent = gncOrganizationCreate(nullptr);
     gncOrganizationSetParent(org, parent);
     EXPECT_EQ(parent, gncOrganizationGetParent(org));
 
@@ -246,12 +240,12 @@ TEST_F(MultiEntityEdgeCaseTest, ReplaceTensorData)
     gdouble data2[] = {3.0, 4.0, 5.0};
 
     gncOrganizationSetTensorData(org, data1, 2);
-    gdouble* r1 = gncOrganizationGetTensorData(org);
+    gdouble *r1 = gncOrganizationGetTensorData(org);
     ASSERT_NE(nullptr, r1);
     EXPECT_DOUBLE_EQ(1.0, r1[0]);
 
     gncOrganizationSetTensorData(org, data2, 3);
-    gdouble* r2 = gncOrganizationGetTensorData(org);
+    gdouble *r2 = gncOrganizationGetTensorData(org);
     ASSERT_NE(nullptr, r2);
     EXPECT_DOUBLE_EQ(3.0, r2[0]);
     EXPECT_DOUBLE_EQ(5.0, r2[2]);
@@ -291,7 +285,7 @@ TEST_F(MultiEntityEdgeCaseTest, OwnerEqualityWithSameOrg)
 
 TEST_F(MultiEntityEdgeCaseTest, OwnerInequalityDifferentOrgs)
 {
-    GncOrganization* other = gncOrganizationCreate(nullptr);
+    GncOrganization *other = gncOrganizationCreate(nullptr);
     GncOwner a, b;
     gncOwnerInitOrganization(&a, org);
     gncOwnerInitOrganization(&b, other);
@@ -366,12 +360,11 @@ TEST_F(MultiEntityEdgeCaseTest, EditNullOrg)
 
 TEST_F(MultiEntityEdgeCaseTest, LargeOrganizationEntityCount)
 {
-    std::vector<gchar*> entities;
+    std::vector<gchar *> entities;
     const int count = 5000;
 
-    for (int i = 0; i < count; i++)
-    {
-        gchar* e = g_strdup_printf("stress_entity_%d", i);
+    for (int i = 0; i < count; i++) {
+        gchar *e = g_strdup_printf("stress_entity_%d", i);
         gncOrganizationAddEntity(org, e);
         entities.push_back(e);
     }
@@ -379,85 +372,79 @@ TEST_F(MultiEntityEdgeCaseTest, LargeOrganizationEntityCount)
     EXPECT_EQ((guint)count, g_list_length(gncOrganizationGetEntities(org)));
 
     // Remove half
-    for (int i = 0; i < count / 2; i++)
-    {
+    for (int i = 0; i < count / 2; i++) {
         gncOrganizationRemoveEntity(org, entities[i]);
     }
 
-    EXPECT_EQ((guint)(count - count / 2),
-              g_list_length(gncOrganizationGetEntities(org)));
+    EXPECT_EQ((guint)(count - count / 2), g_list_length(gncOrganizationGetEntities(org)));
 
-    for (auto* e : entities)
+    for (auto *e : entities)
         g_free(e);
 }
 
 TEST_F(MultiEntityEdgeCaseTest, ManyOrganizationsCreated)
 {
-    std::vector<GncOrganization*> orgs;
-    for (int i = 0; i < 100; i++)
-    {
-        GncOrganization* o = gncOrganizationCreate(nullptr);
+    std::vector<GncOrganization *> orgs;
+    for (int i = 0; i < 100; i++) {
+        GncOrganization *o = gncOrganizationCreate(nullptr);
         ASSERT_NE(nullptr, o);
         orgs.push_back(o);
     }
 
-    for (auto* o : orgs)
+    for (auto *o : orgs)
         gncOrganizationDestroy(o);
 }
 
 TEST_F(MultiEntityEdgeCaseTest, RapidPropertyUpdates)
 {
-    for (int i = 0; i < 1000; i++)
-    {
-        gchar* name = g_strdup_printf("Org-%d", i);
+    for (int i = 0; i < 1000; i++) {
+        gchar *name = g_strdup_printf("Org-%d", i);
         gncOrganizationSetName(org, name);
         g_free(name);
     }
 
     // Last value should stick
-    const gchar* final_name = gncOrganizationGetName(org);
+    const gchar *final_name = gncOrganizationGetName(org);
     EXPECT_STREQ("Org-999", final_name);
 }
 
 TEST_F(MultiEntityEdgeCaseTest, ConcurrentChildOperations)
 {
     // Add 50 children, then remove odd-indexed ones
-    std::vector<GncOrganization*> children;
-    for (int i = 0; i < 50; i++)
-    {
-        GncOrganization* child = gncOrganizationCreate(nullptr);
+    std::vector<GncOrganization *> children;
+    for (int i = 0; i < 50; i++) {
+        GncOrganization *child = gncOrganizationCreate(nullptr);
         gncOrganizationAddChild(org, child);
         children.push_back(child);
     }
 
     EXPECT_EQ(50u, g_list_length(gncOrganizationGetChildren(org)));
 
-    for (int i = 1; i < 50; i += 2)
-    {
+    for (int i = 1; i < 50; i += 2) {
         gncOrganizationRemoveChild(org, children[i]);
     }
 
     EXPECT_EQ(25u, g_list_length(gncOrganizationGetChildren(org)));
 
-    for (auto* child : children)
+    for (auto *child : children)
         gncOrganizationDestroy(child);
 }
 
 TEST_F(MultiEntityEdgeCaseTest, MultipleOrganizationMergeStress)
 {
     // Create 10 orgs, each with 100 entities
-    std::vector<GncOrganization*> orgs;
-    std::vector<std::vector<gchar*>> all_entities;
+    std::vector<GncOrganization *> orgs;
+    std::vector<std::vector<gchar *>> all_entities;
 
-    for (int i = 0; i < 10; i++)
-    {
-        GncOrganization* o = gncOrganizationCreate(nullptr);
-        gncOrganizationSetName(o, g_strdup_printf("StressOrg-%d", i));
-        std::vector<gchar*> ents;
+    for (int i = 0; i < 10; i++) {
+        GncOrganization *o = gncOrganizationCreate(nullptr);
+        gchar *tmp_name = g_strdup_printf("StressOrg-%d", i);
+        gncOrganizationSetName(o, tmp_name);
+        g_free(tmp_name);
+        std::vector<gchar *> ents;
 
-        for (int j = 0; j < 100; j++)
-        {
-            gchar* e = g_strdup_printf("org%d_entity_%d", i, j);
+        for (int j = 0; j < 100; j++) {
+            gchar *e = g_strdup_printf("org%d_entity_%d", i, j);
             gncOrganizationAddEntity(o, e);
             ents.push_back(e);
         }
@@ -467,10 +454,10 @@ TEST_F(MultiEntityEdgeCaseTest, MultipleOrganizationMergeStress)
         all_entities.push_back(ents);
     }
 
-    for (auto& ents : all_entities)
-        for (auto* e : ents)
+    for (auto &ents : all_entities)
+        for (auto *e : ents)
             g_free(e);
 
-    for (auto* o : orgs)
+    for (auto *o : orgs)
         gncOrganizationDestroy(o);
 }

@@ -44,8 +44,8 @@
  */
 
 #include <glib.h>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -57,7 +57,7 @@
 
 class GncOrganizationTest : public ::testing::Test
 {
-protected:
+  protected:
     void SetUp() override
     {
         org = gncOrganizationCreate(nullptr);
@@ -66,14 +66,13 @@ protected:
 
     void TearDown() override
     {
-        if (org)
-        {
+        if (org) {
             gncOrganizationDestroy(org);
             org = nullptr;
         }
     }
 
-    GncOrganization* org = nullptr;
+    GncOrganization *org = nullptr;
 };
 
 // ============================================================
@@ -93,7 +92,7 @@ TEST_F(GncOrganizationTest, CreateWithNullBook)
 {
     // In the unified branch, Create with NULL book still succeeds
     // (book param is gpointer and may be ignored in standalone mode)
-    GncOrganization* o = gncOrganizationCreate(nullptr);
+    GncOrganization *o = gncOrganizationCreate(nullptr);
     EXPECT_NE(nullptr, o);
     gncOrganizationDestroy(o);
 }
@@ -110,10 +109,10 @@ TEST_F(GncOrganizationTest, DestroyNullOrganization)
 
 TEST_F(GncOrganizationTest, SetAndGetID)
 {
-    const char* test_id = "ORG-12345";
+    const char *test_id = "ORG-12345";
     gncOrganizationSetID(org, test_id);
 
-    const char* retrieved_id = gncOrganizationGetID(org);
+    const char *retrieved_id = gncOrganizationGetID(org);
     EXPECT_STREQ(test_id, retrieved_id);
 }
 
@@ -125,19 +124,19 @@ TEST_F(GncOrganizationTest, SetIDWithNull)
 
 TEST_F(GncOrganizationTest, SetAndGetName)
 {
-    const char* test_name = "ACME Corporation";
+    const char *test_name = "ACME Corporation";
     gncOrganizationSetName(org, test_name);
 
-    const char* retrieved_name = gncOrganizationGetName(org);
+    const char *retrieved_name = gncOrganizationGetName(org);
     EXPECT_STREQ(test_name, retrieved_name);
 }
 
 TEST_F(GncOrganizationTest, SetAndGetNotes)
 {
-    const char* test_notes = "This is a test organization for unit testing purposes.";
+    const char *test_notes = "This is a test organization for unit testing purposes.";
     gncOrganizationSetNotes(org, test_notes);
 
-    const char* retrieved_notes = gncOrganizationGetNotes(org);
+    const char *retrieved_notes = gncOrganizationGetNotes(org);
     EXPECT_STREQ(test_notes, retrieved_notes);
 }
 
@@ -276,10 +275,10 @@ TEST_F(GncOrganizationTest, SetUnicodeStrings)
 
 TEST_F(GncOrganizationTest, AddSingleEntity)
 {
-    gchar* entity = g_strdup("test_entity");
+    gchar *entity = g_strdup("test_entity");
     gncOrganizationAddEntity(org, entity);
 
-    GList* entities = gncOrganizationGetEntities(org);
+    GList *entities = gncOrganizationGetEntities(org);
     EXPECT_NE(nullptr, entities);
     EXPECT_EQ(1u, g_list_length(entities));
 
@@ -288,24 +287,23 @@ TEST_F(GncOrganizationTest, AddSingleEntity)
 
 TEST_F(GncOrganizationTest, AddMultipleEntities)
 {
-    std::vector<gchar*> ents;
-    for (int i = 0; i < 5; i++)
-    {
-        gchar* e = g_strdup_printf("entity_%d", i);
+    std::vector<gchar *> ents;
+    for (int i = 0; i < 5; i++) {
+        gchar *e = g_strdup_printf("entity_%d", i);
         gncOrganizationAddEntity(org, e);
         ents.push_back(e);
     }
 
-    GList* entities = gncOrganizationGetEntities(org);
+    GList *entities = gncOrganizationGetEntities(org);
     EXPECT_EQ(5u, g_list_length(entities));
 
-    for (auto* e : ents)
+    for (auto *e : ents)
         g_free(e);
 }
 
 TEST_F(GncOrganizationTest, AddDuplicateEntity)
 {
-    gchar* entity = g_strdup("dup_entity");
+    gchar *entity = g_strdup("dup_entity");
 
     gncOrganizationAddEntity(org, entity);
     gncOrganizationAddEntity(org, entity);
@@ -318,7 +316,7 @@ TEST_F(GncOrganizationTest, AddDuplicateEntity)
 
 TEST_F(GncOrganizationTest, RemoveEntity)
 {
-    gchar* entity = g_strdup("to_remove");
+    gchar *entity = g_strdup("to_remove");
     gncOrganizationAddEntity(org, entity);
     EXPECT_EQ(1u, g_list_length(gncOrganizationGetEntities(org)));
 
@@ -330,8 +328,8 @@ TEST_F(GncOrganizationTest, RemoveEntity)
 
 TEST_F(GncOrganizationTest, RemoveNonexistentEntity)
 {
-    gchar* entity = g_strdup("present");
-    gchar* absent = g_strdup("absent");
+    gchar *entity = g_strdup("present");
+    gchar *absent = g_strdup("absent");
 
     gncOrganizationAddEntity(org, entity);
     gncOrganizationRemoveEntity(org, absent);
@@ -352,9 +350,9 @@ TEST_F(GncOrganizationTest, EntityManagementWithNull)
 
 TEST_F(GncOrganizationTest, MixedEntityTypes)
 {
-    gchar* account   = g_strdup("account_1");
-    gchar* tx        = g_strdup("transaction_1");
-    gchar* commodity = g_strdup("commodity_1");
+    gchar *account = g_strdup("account_1");
+    gchar *tx = g_strdup("transaction_1");
+    gchar *commodity = g_strdup("commodity_1");
 
     gncOrganizationAddEntity(org, account);
     gncOrganizationAddEntity(org, tx);
@@ -373,7 +371,7 @@ TEST_F(GncOrganizationTest, MixedEntityTypes)
 
 TEST_F(GncOrganizationTest, SetAndGetParent)
 {
-    GncOrganization* parent = gncOrganizationCreate(nullptr);
+    GncOrganization *parent = gncOrganizationCreate(nullptr);
     gncOrganizationSetName(parent, "Parent Org");
 
     gncOrganizationSetParent(org, parent);
@@ -384,12 +382,12 @@ TEST_F(GncOrganizationTest, SetAndGetParent)
 
 TEST_F(GncOrganizationTest, AddChild)
 {
-    GncOrganization* child = gncOrganizationCreate(nullptr);
+    GncOrganization *child = gncOrganizationCreate(nullptr);
     gncOrganizationSetName(child, "Child Org");
 
     gncOrganizationAddChild(org, child);
 
-    GList* children = gncOrganizationGetChildren(org);
+    GList *children = gncOrganizationGetChildren(org);
     EXPECT_NE(nullptr, children);
     EXPECT_EQ(1u, g_list_length(children));
     EXPECT_EQ(child, g_list_first(children)->data);
@@ -399,7 +397,7 @@ TEST_F(GncOrganizationTest, AddChild)
 
 TEST_F(GncOrganizationTest, RemoveChild)
 {
-    GncOrganization* child = gncOrganizationCreate(nullptr);
+    GncOrganization *child = gncOrganizationCreate(nullptr);
 
     gncOrganizationAddChild(org, child);
     EXPECT_EQ(1u, g_list_length(gncOrganizationGetChildren(org)));
@@ -412,9 +410,9 @@ TEST_F(GncOrganizationTest, RemoveChild)
 
 TEST_F(GncOrganizationTest, MultipleChildren)
 {
-    GncOrganization* c1 = gncOrganizationCreate(nullptr);
-    GncOrganization* c2 = gncOrganizationCreate(nullptr);
-    GncOrganization* c3 = gncOrganizationCreate(nullptr);
+    GncOrganization *c1 = gncOrganizationCreate(nullptr);
+    GncOrganization *c2 = gncOrganizationCreate(nullptr);
+    GncOrganization *c3 = gncOrganizationCreate(nullptr);
 
     gncOrganizationAddChild(org, c1);
     gncOrganizationAddChild(org, c2);
@@ -455,11 +453,10 @@ TEST_F(GncOrganizationTest, SetGetTensorData)
     gncOrganizationSetTensorDimension(org, 5);
     gncOrganizationSetTensorData(org, data, 5);
 
-    gdouble* retrieved = gncOrganizationGetTensorData(org);
+    gdouble *retrieved = gncOrganizationGetTensorData(org);
     ASSERT_NE(nullptr, retrieved);
 
-    for (int i = 0; i < 5; i++)
-    {
+    for (int i = 0; i < 5; i++) {
         EXPECT_DOUBLE_EQ(data[i], retrieved[i]);
     }
 }
@@ -479,10 +476,9 @@ TEST_F(GncOrganizationTest, SetNullTensorData)
 // ============================================================
 
 static gboolean org_edit_done_called = FALSE;
-static GncOrganization* org_edit_done_org = nullptr;
+static GncOrganization *org_edit_done_org = nullptr;
 
-static void
-test_org_edit_done_callback(GncOrganization* o, gpointer user_data)
+static void test_org_edit_done_callback(GncOrganization *o, gpointer user_data)
 {
     org_edit_done_called = TRUE;
     org_edit_done_org = o;
@@ -532,15 +528,13 @@ TEST_F(GncOrganizationTest, NullCallbackOnDone)
 
 TEST_F(GncOrganizationTest, HasValidGUID)
 {
-    const GncGUID* guid = gncOrganizationGetGUID(org);
+    const GncGUID *guid = gncOrganizationGetGUID(org);
     ASSERT_NE(nullptr, guid);
 
     // Verify it's a non-zero GUID
     gboolean all_zero = TRUE;
-    for (int i = 0; i < 16; i++)
-    {
-        if (guid->data[i] != 0)
-        {
+    for (int i = 0; i < 16; i++) {
+        if (guid->data[i] != 0) {
             all_zero = FALSE;
             break;
         }
@@ -550,17 +544,15 @@ TEST_F(GncOrganizationTest, HasValidGUID)
 
 TEST_F(GncOrganizationTest, MultipleOrganizationsHaveUniqueGUIDs)
 {
-    GncOrganization* org2 = gncOrganizationCreate(nullptr);
+    GncOrganization *org2 = gncOrganizationCreate(nullptr);
     ASSERT_NE(nullptr, org2);
 
-    const GncGUID* guid1 = gncOrganizationGetGUID(org);
-    const GncGUID* guid2 = gncOrganizationGetGUID(org2);
+    const GncGUID *guid1 = gncOrganizationGetGUID(org);
+    const GncGUID *guid2 = gncOrganizationGetGUID(org2);
 
     gboolean same = TRUE;
-    for (int i = 0; i < 16; i++)
-    {
-        if (guid1->data[i] != guid2->data[i])
-        {
+    for (int i = 0; i < 16; i++) {
+        if (guid1->data[i] != guid2->data[i]) {
             same = FALSE;
             break;
         }
@@ -605,8 +597,8 @@ TEST_F(GncOrganizationTest, CompleteLifecycle)
     EXPECT_TRUE(gncOrganizationGetActive(org));
 
     // Add entities
-    gchar* e1 = g_strdup("entity_1");
-    gchar* e2 = g_strdup("entity_2");
+    gchar *e1 = g_strdup("entity_1");
+    gchar *e2 = g_strdup("entity_2");
     gncOrganizationAddEntity(org, e1);
     gncOrganizationAddEntity(org, e2);
     EXPECT_EQ(2u, g_list_length(gncOrganizationGetEntities(org)));
@@ -627,44 +619,40 @@ TEST_F(GncOrganizationTest, CompleteLifecycle)
 
 TEST_F(GncOrganizationTest, AddManyEntities)
 {
-    std::vector<gchar*> entities;
-    for (int i = 0; i < 1000; i++)
-    {
-        gchar* e = g_strdup_printf("entity_%d", i);
+    std::vector<gchar *> entities;
+    for (int i = 0; i < 1000; i++) {
+        gchar *e = g_strdup_printf("entity_%d", i);
         gncOrganizationAddEntity(org, e);
         entities.push_back(e);
     }
 
     EXPECT_EQ(1000u, g_list_length(gncOrganizationGetEntities(org)));
 
-    for (auto* e : entities)
+    for (auto *e : entities)
         g_free(e);
 }
 
 TEST_F(GncOrganizationTest, MultipleOrganizationsInBook)
 {
     // Create multiple organizations and verify they are independent
-    std::vector<GncOrganization*> orgs;
-    for (int i = 0; i < 10; i++)
-    {
-        GncOrganization* o = gncOrganizationCreate(nullptr);
+    std::vector<GncOrganization *> orgs;
+    for (int i = 0; i < 10; i++) {
+        GncOrganization *o = gncOrganizationCreate(nullptr);
         ASSERT_NE(nullptr, o);
-        gncOrganizationSetName(o, g_strdup_printf("Org %d", i));
+        gchar *tmp_name = g_strdup_printf("Org %d", i);
+        gncOrganizationSetName(o, tmp_name);
+        g_free(tmp_name);
         orgs.push_back(o);
     }
 
     // Verify all have unique GUIDs
-    for (size_t i = 0; i < orgs.size(); i++)
-    {
-        for (size_t j = i + 1; j < orgs.size(); j++)
-        {
-            const GncGUID* g1 = gncOrganizationGetGUID(orgs[i]);
-            const GncGUID* g2 = gncOrganizationGetGUID(orgs[j]);
+    for (size_t i = 0; i < orgs.size(); i++) {
+        for (size_t j = i + 1; j < orgs.size(); j++) {
+            const GncGUID *g1 = gncOrganizationGetGUID(orgs[i]);
+            const GncGUID *g2 = gncOrganizationGetGUID(orgs[j]);
             gboolean same = TRUE;
-            for (int k = 0; k < 16; k++)
-            {
-                if (g1->data[k] != g2->data[k])
-                {
+            for (int k = 0; k < 16; k++) {
+                if (g1->data[k] != g2->data[k]) {
                     same = FALSE;
                     break;
                 }
@@ -673,6 +661,6 @@ TEST_F(GncOrganizationTest, MultipleOrganizationsInBook)
         }
     }
 
-    for (auto* o : orgs)
+    for (auto *o : orgs)
         gncOrganizationDestroy(o);
 }

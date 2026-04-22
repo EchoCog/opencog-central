@@ -17,7 +17,7 @@ PR 3 (Feb 2026). Source commits: `16eb2e3797` through `9c0cc98ec9`.
 - **Lines of Code**: ~500
 - **Purpose**: Comprehensive testing of GncOrganization entity type
 
-#### Test Categories:
+#### Organization Test Categories
 
 **Basic Creation/Destruction** (3 tests)
 - `CreateOrganization` — Verify successful creation with valid defaults
@@ -94,7 +94,7 @@ PR 3 (Feb 2026). Source commits: `16eb2e3797` through `9c0cc98ec9`.
 - **Lines of Code**: ~550
 - **Purpose**: Multi-entity aggregation and Owner integration tests
 
-#### Test Categories:
+#### Multi-Entity Test Categories
 
 **Basic Entity Operations** (13 tests)
 - Collection create/destroy, add/remove, count, contains
@@ -118,7 +118,7 @@ PR 3 (Feb 2026). Source commits: `16eb2e3797` through `9c0cc98ec9`.
 - **Lines of Code**: ~470
 - **Purpose**: Edge cases, boundary conditions, and stress testing
 
-#### Test Categories:
+#### Edge Case Test Categories
 
 **GUID Edge Cases** (3 tests)
 - Non-zero GUID after creation
@@ -170,7 +170,7 @@ PR 3 (Feb 2026). Source commits: `16eb2e3797` through `9c0cc98ec9`.
 | Stress/Scale Tests | 8 |
 | Edge Case Tests | 32 |
 
-## Bug Fix Ported
+## Bugfix Ported
 
 The original gnucashmulti commit `9d9e71b023` fixed a null pointer bug in
 `gncOrganizationOnDone` where `gncAddressClearDirty(organization->addr)` was

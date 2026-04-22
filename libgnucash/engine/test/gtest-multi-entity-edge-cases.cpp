@@ -164,12 +164,13 @@ TEST_F(MultiEntityEdgeCaseTest, DeepHierarchy) {
   }
 }
 
-TEST_F(MultiEntityEdgeCaseTest, CircularParentRejected) {
+TEST_F(MultiEntityEdgeCaseTest, SelfParentRejectedInHierarchy) {
+  // Verify self-reference is rejected even when org already has children.
+  // NOTE: transitive cycle detection (A->B->A) is not yet implemented in
+  // gncOrganizationSetParent — it only guards against org == parent.
   GncOrganization *child = gncOrganizationCreate(nullptr);
   gncOrganizationSetParent(child, org);
 
-  // Trying to set org's parent to child would create a cycle
-  // The implementation should prevent self-referencing
   gncOrganizationSetParent(org, org);
   EXPECT_EQ(nullptr, gncOrganizationGetParent(org));
 

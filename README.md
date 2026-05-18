@@ -48,3 +48,5 @@ Feel free to modify these files as needed for your development process.
 ## License
 
 This repository is licensed under the MIT License. See the `LICENSE` file for more information.
+
+<!-- Declarative environment verification -->
